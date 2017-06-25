@@ -1,9 +1,11 @@
 import {combineReducers} from 'redux'
 import {routerReducer} from 'react-router-redux'
 
-import counter from './counter'
+import blockchain from './blockchain'
+import wallet from './wallet'
 
 export default combineReducers({
   routing: routerReducer,
-  counter,
+  blockchain,
+  wallet,
 })
