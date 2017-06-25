@@ -1,68 +1,73 @@
 import React from 'react'
-import {push} from 'react-router-redux'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 
 import {
-  increment,
-  incrementAsync,
-  decrement,
-  decrementAsync,
-} from '../../modules/counter'
+  fetchTicker,
+  fetchAddress,
+} from '../../modules/blockchain'
+import {generateAddress} from '../../modules/wallet'
+import {presentAmount} from '../../lib/currencyHelpers'
 
 const Home = props => (
   <div>
-    <h1>Home</h1>
-    <p>Welcome home count: {props.count}</p>
-
     <p>
       <button
-        onClick={props.increment}
-        disabled={props.isIncrementing}
+        onClick={props.fetchTicker}
       >
-        Increment
-      </button>
-      <button
-        onClick={props.incrementAsync}
-        disabled={props.isIncrementing}
-      >
-        Increment Async
+        Fetch Dollar to coin conversion rate
       </button>
     </p>
 
-    <p>
-      <button
-        onClick={props.decrement}
-        disabled={props.isDecrementing}
-      >
-        Decrement
-      </button>
-      <button
-        onClick={props.decrementAsync}
-        disabled={props.isDecrementing}
-      >
-        Decrement Async
-      </button>
-    </p>
+    <p>{`${presentAmount(props, props.conversion)} per coin`}</p>
 
-    <p>
-      <button onClick={() => props.changePage()}>Got to about page via redux</button>
-    </p>
+    <div>
+      <form onSubmit={props.fetchAddress}>
+        {props.generatedAddress
+          ? <input
+            key='default'
+            type='text'
+            name='address'
+            placeholder='enter address'
+            defaultValue={props.generatedAddress}
+            />
+          : <input
+            type='text'
+            name='address'
+            placeholder='enter address'
+            />
+        }
+        &nbsp;
+        <button
+          type='submit'
+        >
+          Fetch Address
+        </button>
+      </form>
+      {props.dollars && <p>{presentAmount(props, props.dollars)}</p>}
+    </div>
+
+    <div>
+      <button
+        onClick={props.generateAddress}
+      >
+        Generate Address
+      </button>
+    </div>
   </div>
 )
 
 const mapStateToProps = state => ({
-  count: state.counter.count,
-  isIncrementing: state.counter.isIncrementing,
-  isDecrementing: state.counter.isDecrementing,
+  symbol: state.blockchain.symbol,
+  conversion: state.blockchain.conversion,
+  dollars: state.blockchain.dollars,
+  generatedAddress: state.wallet.generatedAddress,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  increment,
-  incrementAsync,
-  decrement,
-  decrementAsync,
-  changePage: () => push('/about'),
+  fetchTicker,
+  fetchAddress,
+  generateAddress,
 }, dispatch)
 
 export default connect(
