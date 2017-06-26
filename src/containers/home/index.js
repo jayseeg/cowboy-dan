@@ -7,6 +7,10 @@ import {
   fetchAddress,
 } from '../../modules/blockchain'
 import {generateAddress} from '../../modules/wallet'
+import {
+  subscribeAddress,
+  ping,
+} from '../../modules/blockchainWebsocket'
 import {presentAmount} from '../../lib/currencyHelpers'
 
 const Home = props => (
@@ -54,6 +58,20 @@ const Home = props => (
         Generate Address
       </button>
     </div>
+
+    <div>
+      <button
+        onClick={props.ping}
+      >
+        Ping
+      </button>
+      <button
+        onClick={props.subscribeAddress}
+      >
+        Subscribe to Address
+      </button>
+      {props.coinsReceived && <p>{props.coinsReceived} coins received</p>}
+    </div>
   </div>
 )
 
@@ -62,12 +80,15 @@ const mapStateToProps = state => ({
   conversion: state.blockchain.conversion,
   dollars: state.blockchain.dollars,
   generatedAddress: state.wallet.generatedAddress,
+  coinsReceived: state.blockchainWebsocket.coinsReceived
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchTicker,
   fetchAddress,
   generateAddress,
+  subscribeAddress,
+  ping,
 }, dispatch)
 
 export default connect(
