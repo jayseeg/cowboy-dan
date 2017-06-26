@@ -10,6 +10,10 @@ import thunk from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
 
 import socketMiddleware from './lib/socketMiddleware'
+import {
+  messageTypes,
+  socketActions,
+} from './modules/blockchainWebsocket'
 import rootReducer from './modules'
 
 export const history = createHistory()
@@ -35,7 +39,7 @@ const middleware = [
   thunk,
   routerMiddleware(history),
   multiClientMiddleware(clients),
-  socketMiddleware(),
+  socketMiddleware('op', socketActions, messageTypes),
 ]
 
 if (process.env.NODE_ENV === 'development') {
