@@ -8,6 +8,8 @@ import {multiClientMiddleware} from 'redux-axios-middleware'
 import {routerMiddleware} from 'react-router-redux'
 import thunk from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
+
+import socketMiddleware from './lib/socketMiddleware'
 import rootReducer from './modules'
 
 export const history = createHistory()
@@ -33,6 +35,7 @@ const middleware = [
   thunk,
   routerMiddleware(history),
   multiClientMiddleware(clients),
+  socketMiddleware(),
 ]
 
 if (process.env.NODE_ENV === 'development') {
