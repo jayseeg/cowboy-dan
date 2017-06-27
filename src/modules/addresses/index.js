@@ -9,12 +9,25 @@ export const GENERATE_ADDRESS_SUCCESS = 'addresses/GENERATE_ADDRESS_SUCCESS'
 const initialState = {
   addressIDs: [],
   generating: false,
+  addresses: {},
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case FETCH_ADDRESSES_SUCCESS:
-      return state
+      const latestAddresses = action.payload.data.addresses
+        .reduce((addresses, address) => {
+          addresses[address.address] = address
+          return addresses
+        }, {})
+
+      return {
+        ...state,
+        addresses: {
+          ...state.addresses,
+          ...latestAddresses,
+        }
+      }
 
     case SAVE_FORM:
       const {form} = action

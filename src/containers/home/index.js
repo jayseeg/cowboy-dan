@@ -26,6 +26,7 @@ const mapStateToProps = state => ({
   dollars: state.blockchain.dollars,
   addressIDs: state.addresses.addressIDs,
   generating: state.addresses.generating,
+  addresses: state.addresses.addresses,
   coinsReceived: state.blockchainWebsocket.coinsReceived,
   connecting: state.blockchainWebsocket.connecting,
 })
