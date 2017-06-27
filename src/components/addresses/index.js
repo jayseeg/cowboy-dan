@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
+import {presentAmount} from '../../lib/currencyHelpers'
+
 export default class Addresses extends Component {
   static propTypes = {
     fetchAddresses: PropTypes.func.isRequired,
@@ -9,7 +11,13 @@ export default class Addresses extends Component {
     generateAddress: PropTypes.func.isRequired,
     connecting: PropTypes.bool.isRequired,
     generating: PropTypes.bool.isRequired,
-    addressIDs: PropTypes.array,
+    addresses: PropTypes.object.isRequired,
+    addressIDs: PropTypes.array.isRequired,
+    conversion: PropTypes.number,
+  }
+
+  static defaultProps = {
+    BITCOIN_PRECISION: 100000000,
   }
 
   renderAddresses = ({props, props: {addressIDs}}) => {
@@ -23,6 +31,7 @@ export default class Addresses extends Component {
   renderAddressField = (props, index) => (
     <div key={`address${index}null`}>
       <input
+        style={{width: '30em'}}
         type='text'
         name={`address${index}`}
         placeholder='enter address'
@@ -34,14 +43,34 @@ export default class Addresses extends Component {
   renderFilledAddressField = (props, index, addressID) => (
     <div key={`address${index}`}>
       <input
+        style={{width: '30em'}}
         type='text'
         name={`address${index}`}
         placeholder='enter address'
         defaultValue={addressID}
         onBlur={this.saveForm(props)}
       />
+      {this.renderAmounts({props, index, addressID,})}
     </div>
   )
+
+  renderAmounts = ({
+    props, props: {
+      addresses,
+      conversion,
+      BITCOIN_PRECISION,
+    },
+    addressID,
+  }) => {
+    const bitcoins = addresses[addressID]
+                     && addresses[addressID].total_received / BITCOIN_PRECISION
+    const rawDollars = conversion * bitcoins
+    const dollars = presentAmount(props, rawDollars)
+
+    return addresses[addressID]
+      ? <span style={{fontSize: 12}}> {bitcoins} bitcoins or {dollars}</span>
+      : <span style={{fontSize: 12}}> Man, we ain't heard shit.</span>
+  }
 
   saveForm = ({saveForm}) => () => saveForm(this._form)
 
@@ -79,7 +108,7 @@ export default class Addresses extends Component {
           ref={C => this._form = C}
           onSubmit={this.fetchAddresses(props)}
         >
-          <div style={{float:'left'}}>
+          <div>
             <button
               type='button'
               onClick={this.saveForm(props)}
@@ -107,7 +136,7 @@ export default class Addresses extends Component {
               Fetch Address{buttonPlural}
             </button>
           </div>
-          <div style={{float:'right'}}>
+          <div style={{textAlign: 'left'}}>
             {this.renderAddresses({props})}
           </div>
         </form>

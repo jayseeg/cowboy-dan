@@ -7,7 +7,7 @@ import {
   fetchAddresses,
   generateAddress,
   saveForm,
-} from '../../modules/blockchain'
+} from '../../modules/addresses'
 import {subscribeAddressIDs} from '../../modules/blockchainWebsocket'
 import {presentAmount} from '../../lib/currencyHelpers'
 
@@ -21,11 +21,12 @@ const Home = props => (
 )
 
 const mapStateToProps = state => ({
-  addressIDs: state.blockchain.addressIDs,
   symbol: state.blockchain.symbol,
   conversion: state.blockchain.conversion,
   dollars: state.blockchain.dollars,
-  generating: state.blockchain.generating,
+  addressIDs: state.addresses.addressIDs,
+  generating: state.addresses.generating,
+  addresses: state.addresses.addresses,
   coinsReceived: state.blockchainWebsocket.coinsReceived,
   connecting: state.blockchainWebsocket.connecting,
 })
