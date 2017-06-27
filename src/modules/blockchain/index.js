@@ -2,18 +2,17 @@ import serializeFormData from '../../lib/serializeFormData'
 
 export const FETCH_TICKER = 'blockchain/FETCH_TICKER'
 export const FETCH_TICKER_SUCCESS = 'blockchain/FETCH_TICKER_SUCCESS'
-export const FETCH_ADDRESS = 'blockchain/FETCH_ADDRESS'
-export const FETCH_ADDRESS_SUCCESS = 'blockchain/FETCH_ADDRESS_SUCCESS'
-export const NOOP = 'blockchain/NOOP'
-
-const CURRENCY = 'USD'
-const BITCOIN_PRECISION = 100000000
+export const FETCH_ADDRESSES = 'blockchain/FETCH_ADDRESSES'
+export const FETCH_ADDRESSES_SUCCESS = 'blockchain/FETCH_ADDRESSES_SUCCESS'
+export const SAVE_FORM = 'blockchain/SAVE_FORM'
+export const GENERATE_ADDRESS = 'blockchain/GENERATE_ADDRESS'
+export const GENERATE_ADDRESS_SUCCESS = 'blockchain/GENERATE_ADDRESS_SUCCESS'
 
 const initialState = {
-  ticker: {},
-  dollars: null,
   conversion: null,
   symbol: '$',
+  addressIDs: [],
+  generating: false,
 }
 
 export default (state = initialState, action) => {
@@ -21,24 +20,45 @@ export default (state = initialState, action) => {
     case FETCH_TICKER_SUCCESS:
       const {
         symbol,
-        last: _conversion,
-      } = action.payload.data[CURRENCY]
+        last: conversion,
+      } = action.payload.data.USD
 
       return {
         ...state,
         symbol,
-        conversion: _conversion,
+        conversion,
       }
 
-    case FETCH_ADDRESS_SUCCESS:
-      const {conversion} = state
-      const {total_received} = action.payload.data
-      const coins_received = total_received / BITCOIN_PRECISION
-      const dollars = (coins_received * conversion)
+    case FETCH_ADDRESSES_SUCCESS:
+      return state
+
+    case SAVE_FORM:
+      const {form} = action
+      const formData = new FormData(form)
+      const formHash = serializeFormData(formData)
+      const addressIDs = Object.keys(formHash)
+        .filter(key => key.indexOf('address') !== -1)
+        .map(key => formHash[key])
+        .filter(id => id)
 
       return {
         ...state,
-        dollars,
+        addressIDs,
+      }
+
+    case GENERATE_ADDRESS:
+      return {
+        ...state,
+        generating: true,
+      }
+
+    case GENERATE_ADDRESS_SUCCESS:
+      const {address} = action.payload.data
+
+      return {
+        ...state,
+        addressIDs: state.addressIDs.concat(address),
+        generating: false,
       }
 
     default:
@@ -57,20 +77,26 @@ export const fetchTicker = () => {
   }
 }
 
-export const fetchAddress = event => {
-  event.preventDefault()
-  const formData = new FormData(event.target)
-  const formHash = serializeFormData(formData)
-  const {address} = formHash
+export const saveForm = form => ({
+  type: SAVE_FORM,
+  form,
+})
 
-  return address
-    ? {
-        type: FETCH_ADDRESS,
-        payload: {
-          request: {
-            url: `/rawaddr/${address}`,
-          },
-        },
-      }
-    : {type: NOOP}
-}
+export const fetchAddresses = addressIDs => ({
+  type: FETCH_ADDRESSES,
+  payload: {
+    request: {
+      url: `/multiaddr?active=${addressIDs.join('|')}`,
+    },
+  },
+})
+
+export const generateAddress = () => ({
+  type: GENERATE_ADDRESS,
+  payload: {
+    client: 'wallet',
+    request: {
+      url: `/new_address`,
+    },
+  }
+})

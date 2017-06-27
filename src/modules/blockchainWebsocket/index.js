@@ -8,9 +8,6 @@ import {
 } from '../../lib/socketMiddleware'
 export const PONG = 'blockchainWebsocket/PONG'
 
-const BITCOIN_PRECISION = 100000000
-const ADDR = '1BCGfVLSwjry8jWLgHaRnA1HaWLG5spnFd'
-
 const initialState = {
   coinsReceived: null,
   connected: false,
@@ -39,14 +36,8 @@ export default (state = initialState, action) => {
       }
 
     case MESSAGE_RECEIVED:
-      const {out} = action.payload.msg.x
-      const transaction = out.find(txn => txn.addr === ADDR)
-      const {value} = transaction
-      const coinsReceived = value / BITCOIN_PRECISION
-
       return {
         ...state,
-        coinsReceived,
       }
 
     case PONG:
@@ -64,13 +55,17 @@ export const connect = () => ({
   url: 'wss://ws.blockchain.info/inv',
 })
 
-export const subscribeAddress = () => ({
-  type: SEND_CHAT_MESSAGE,
-  message: {
-    op: 'addr_sub',
-    addr: ADDR,
-  },
-})
+export const subscribeAddressIDs = addressIDs => dispatch => {
+  addressIDs.forEach(addressID => {
+    dispatch({
+      type: SEND_CHAT_MESSAGE,
+      message: {
+        op: 'addr_sub',
+        addr: addressID,
+      },
+    })
+  })
+}
 
 export const connecting = () => ({
   type: CONNECTING,
