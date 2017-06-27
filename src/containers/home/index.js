@@ -8,7 +8,10 @@ import {
   generateAddress,
   saveForm,
 } from '../../modules/addresses'
-import {subscribeAddressIDs} from '../../modules/blockchainWebsocket'
+import {
+  subscribeAddressIDs,
+  dropUpdatedAddressIDs,
+} from '../../modules/blockchainWebsocket'
 import {presentAmount} from '../../lib/currencyHelpers'
 
 const Home = props => (
@@ -29,6 +32,7 @@ const mapStateToProps = state => ({
   addresses: state.addresses.addresses,
   coinsReceived: state.blockchainWebsocket.coinsReceived,
   connecting: state.blockchainWebsocket.connecting,
+  updatedAddressIDs: state.blockchainWebsocket.updatedAddressIDs,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -36,6 +40,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   generateAddress,
   subscribeAddressIDs,
   saveForm,
+  dropUpdatedAddressIDs,
 }, dispatch)
 
 export default connect(

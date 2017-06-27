@@ -9,15 +9,34 @@ export default class Addresses extends Component {
     subscribeAddressIDs: PropTypes.func.isRequired,
     saveForm: PropTypes.func.isRequired,
     generateAddress: PropTypes.func.isRequired,
+    dropUpdatedAddressIDs: PropTypes.func.isRequired,
     connecting: PropTypes.bool.isRequired,
     generating: PropTypes.bool.isRequired,
     addresses: PropTypes.object.isRequired,
     addressIDs: PropTypes.array.isRequired,
+    updatedAddressIDs: PropTypes.array,
     conversion: PropTypes.number,
   }
 
   static defaultProps = {
     BITCOIN_PRECISION: 100000000,
+  }
+
+  componentWillReceiveProps({updatedAddressIDs}) {
+    const {
+      fetchAddresses,
+      addressIDs,
+      dropUpdatedAddressIDs,
+    } = this.props
+
+    if (updatedAddressIDs.length) {
+      const fetchAddressIDs = updatedAddressIDs.filter(id => {
+        return addressIDs.indexOf(id) !== -1
+      })
+
+      fetchAddresses(fetchAddressIDs)
+      dropUpdatedAddressIDs()
+    }
   }
 
   renderAddresses = ({props, props: {addressIDs}}) => {
