@@ -2,93 +2,39 @@ import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 
+import Addresses from '../../components/addresses'
 import {
-  fetchTicker,
-  fetchAddress,
+  fetchAddresses,
+  generateAddress,
+  saveForm,
 } from '../../modules/blockchain'
-import {generateAddress} from '../../modules/wallet'
-import {
-  subscribeAddress,
-  ping,
-} from '../../modules/blockchainWebsocket'
+import {subscribeAddressIDs} from '../../modules/blockchainWebsocket'
 import {presentAmount} from '../../lib/currencyHelpers'
 
 const Home = props => (
   <div>
-    <p>
-      <button
-        onClick={props.fetchTicker}
-      >
-        Fetch Dollar to coin conversion rate
-      </button>
-    </p>
-
-    <p>{`${presentAmount(props, props.conversion)} per coin`}</p>
-
-    <div>
-      <form onSubmit={props.fetchAddress}>
-        {props.generatedAddress
-          ? <input
-            key='default'
-            type='text'
-            name='address'
-            placeholder='enter address'
-            defaultValue={props.generatedAddress}
-            />
-          : <input
-            type='text'
-            name='address'
-            placeholder='enter address'
-            />
-        }
-        &nbsp;
-        <button
-          type='submit'
-        >
-          Fetch Address
-        </button>
-      </form>
-      {props.dollars && <p>{presentAmount(props, props.dollars)}</p>}
-    </div>
-
-    <div>
-      <button
-        onClick={props.generateAddress}
-      >
-        Generate Address
-      </button>
-    </div>
-
-    <div>
-      <button
-        onClick={props.ping}
-      >
-        Ping
-      </button>
-      <button
-        onClick={props.subscribeAddress}
-      >
-        Subscribe to Address
-      </button>
-      {props.coinsReceived && <p>{props.coinsReceived} coins received</p>}
+    <p>{`Trading at ${presentAmount(props, props.conversion)}/Bitcoin`}</p>
+    <div style={{width: 600, margin: '0 auto'}}>
+      <Addresses {...props} />
     </div>
   </div>
 )
 
 const mapStateToProps = state => ({
+  addressIDs: state.blockchain.addressIDs,
   symbol: state.blockchain.symbol,
   conversion: state.blockchain.conversion,
   dollars: state.blockchain.dollars,
-  generatedAddress: state.wallet.generatedAddress,
-  coinsReceived: state.blockchainWebsocket.coinsReceived
+  generating: state.blockchain.generating,
+  coinsReceived: state.blockchainWebsocket.coinsReceived,
+  connecting: state.blockchainWebsocket.connecting,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchTicker,
-  fetchAddress,
+  fetchAddresses,
   generateAddress,
-  subscribeAddress,
-  ping,
+  subscribeAddressIDs,
+  saveForm,
 }, dispatch)
 
 export default connect(
