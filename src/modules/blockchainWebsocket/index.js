@@ -7,11 +7,13 @@ import {
   MESSAGE_RECEIVED,
 } from '../../lib/socketMiddleware'
 export const PONG = 'blockchainWebsocket/PONG'
+export const DROP_UPDATED_ADDRESSES = 'blockchainWebsocket/DROP_UPDATED_ADDRESSES'
 
 const initialState = {
   coinsReceived: null,
   connected: false,
   connecting: false,
+  updatedAddressIDs: [],
 }
 
 export default (state = initialState, action) => {
@@ -36,14 +38,24 @@ export default (state = initialState, action) => {
       }
 
     case MESSAGE_RECEIVED:
+      const addresses = action.message.x.out
+      const updatedAddressIDs = addresses.map(address => address.addr)
+
       return {
         ...state,
+        updatedAddressIDs,
       }
 
     case PONG:
       console.log(action.message.op)
 
       return state
+
+    case DROP_UPDATED_ADDRESSES:
+      return {
+        ...state,
+        updatedAddressIDs: [],
+      }
 
     default:
       return state
@@ -98,6 +110,10 @@ export const ping = () => ({
 export const pong = message => ({
   type: PONG,
   message,
+})
+
+export const dropUpdatedAddressIDs = () => ({
+  type: DROP_UPDATED_ADDRESSES,
 })
 
 export const socketActions = {
