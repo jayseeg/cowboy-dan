@@ -13,7 +13,7 @@ import Home from '../home'
 import {fetchTicker} from '../../modules/blockchain'
 import {saveUrl} from '../../modules/addresses'
 import {composeEnterHooksParallel} from '../../lib/reactRouterComposeHooks'
-import '../../App.css'
+import './App.css'
 
 injectTapEventPlugin()
 
