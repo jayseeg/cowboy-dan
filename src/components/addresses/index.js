@@ -8,6 +8,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add'
 import Chip from 'material-ui/Chip'
 import SvgIconAutoRenew from 'material-ui/svg-icons/action/autorenew'
 
+import './style.css'
+
 import Logo from '../../components/logos'
 import {presentAmount} from '../../lib/currencyHelpers'
 
@@ -68,11 +70,8 @@ export default class Addresses extends Component {
       <FloatingActionButton
         mini
         onClick={this.saveForm(props)}
+        className='FloatingActionButton'
         backgroundColor='#d4ff00'
-        style={{
-          position: 'absolute',
-          left: -65,
-        }}
       >
         <ContentAdd />
       </FloatingActionButton>
@@ -130,27 +129,18 @@ export default class Addresses extends Component {
                      && addresses[addressID].total_received / BITCOIN_PRECISION
     const rawDollars = conversion * bitcoins
     const dollars = presentAmount(props, rawDollars)
-    const iconStyle = {
-      width:20, height:20,
-      position: 'absolute',
-      top: 6,
-      left: 8,
-      fill: '#D4FF00',
-    }
     const Icon = addresses[addressID]
-      ? Logo(iconStyle)
-      : <SvgIconAutoRenew style={iconStyle} />
+      ? Logo({className: 'Chip-icon'})
+      : <SvgIconAutoRenew className='Chip-icon' color='#D4FF00' />
     const text = addresses[addressID]
       ? `${bitcoins} bitcoins or ${dollars}`
       : 'no word yet'
 
     return (
       <Chip
+        className='Chip'
+        style={{paddingLeft: 24}}
         onClick={this.fetchAddresses(props)}
-        style={{
-          paddingLeft: 24,
-          cursor: 'pointer',
-        }}
       >
         {Icon}
         {text}
@@ -199,33 +189,31 @@ export default class Addresses extends Component {
       : ''
 
     return (
-      <div style={{textAlign: 'left'}}>
+      <div className='Form-wrapper'>
         <form
           ref={C => this._form = C}
           onSubmit={this.fetchAddresses(props)}
         >
           <div>
             <RaisedButton
+              className='Raised-button'
               label='Generate Address'
               onClick={generateAddress}
               disabled={generating}
-              style={{
-                marginRight: '1em'
-              }}
             />
             <RaisedButton
+              className='Raised-button'
               label={`Subscribe${subscribedD} to Address${buttonPlural}`}
               type='button'
               onClick={this.subscribeAddressIDs(props)}
               disabled={disabled || connecting}
               secondary={connected}
-              style={{
-                marginRight: '1em'
-              }}
             />
             <RaisedButton
+              className='Raised-button'
               label={`Fetch Address${buttonPlural}`}
               type='submit'
+              style={{marginRight: 0}}
               {...{disabled}}
             />
           </div>
