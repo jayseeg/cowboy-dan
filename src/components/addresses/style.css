@@ -1,0 +1,25 @@
+.FloatingActionButton {
+  position: absolute;
+  left: -65px;
+}
+
+.Chip-icon {
+  width:20;
+  height:20;
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  fill: #D4FF00;
+}
+
+.Chip {
+  cursor: pointer;
+}
+
+.Form-wrapper {
+  text-align: left;
+}
+
+.Raised-button {
+  margin-right: 1em;
+}

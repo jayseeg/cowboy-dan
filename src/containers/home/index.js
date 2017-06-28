@@ -5,6 +5,8 @@ import {Link} from 'react-router-dom'
 
 import AppBar from 'material-ui/AppBar'
 
+import './style.css'
+
 import Addresses from '../../components/addresses'
 import Logo from '../../components/logos'
 import {
@@ -32,7 +34,7 @@ const Home = props => (
           to="/"
           onClick={props.clearForm}
         >
-          {Logo({width:47, height:47})}
+          {Logo({style: {width:47, height:47}})}
         </Link>
       }
       iconStyleLeft={{
@@ -52,12 +54,7 @@ const Home = props => (
         color: '#d4ff00',
       }}
     />
-    <div
-      style={{
-        width: '36em',
-        margin: '0 auto',
-      }}
-    >
+    <div className='Addresses-wrapper'>
       <div>
         <Addresses {...props} />
       </div>
