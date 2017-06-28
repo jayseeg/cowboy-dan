@@ -58,7 +58,7 @@ export default (typeKey = 'type', socketActions = {}, messageTypes = {}) => {
           // problematic for slow connections, could overflow?
           setTimeout(() => socket.send(JSON.stringify(action.message)), 1000)
         } else {
-          socket.send(JSON.stringify(action.message))
+          setTimeout(() => socket.send(JSON.stringify(action.message)), 1000)
         }
 
         break
