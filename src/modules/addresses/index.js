@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
       const formHash = serializeFormData(formData)
       const addressIDs = Object.keys(formHash)
         .filter(key => key.indexOf('address') !== -1)
-        .map(key => formHash[key])
+        .map(key => formHash[key].trim())
         .filter(id => id)
 
       return {

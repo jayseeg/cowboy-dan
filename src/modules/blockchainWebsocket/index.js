@@ -4,6 +4,7 @@ import {
   CONNECTING,
   CONNECTED,
   DISCONNECTED,
+  DISCONNECT,
   MESSAGE_RECEIVED,
 } from '../../lib/socketMiddleware'
 export const PONG = 'blockchainWebsocket/PONG'
@@ -84,9 +85,21 @@ export const connecting = () => ({
   status: 'connecting',
 })
 
-export const connected = () => ({
-  type: CONNECTED,
-  status: 'connected',
+export const connected = () => dispatch => {
+  dispatch({
+    type: CONNECTED,
+    status: 'connected',
+  })
+  
+  setTimeout(() => dispatch(ping()), 30000)
+  setTimeout(() => dispatch(ping()), 60000)
+  setTimeout(() => dispatch(ping()), 90000)
+  setTimeout(() => dispatch(disconnect()), 120000)
+}
+
+export const disconnect = () => ({
+  type: DISCONNECT,
+  status: 'disconnect',
 })
 
 export const disconnected = () => ({

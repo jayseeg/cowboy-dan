@@ -3,24 +3,33 @@ import {Route} from 'react-router-dom'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 
+import injectTapEventPlugin from 'react-tap-event-plugin'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+
 import Home from '../home'
 
 import {fetchTicker} from '../../modules/blockchain'
 import '../../App.css'
 
+injectTapEventPlugin()
+
 class App extends Component {
   render() {
     return (
-      <div className='App'>
-        <main>
-          <Route
-            exact
-            path='/'
-            component={Home}
-            onEnter={this.props.fetchTicker()}
-          />
-        </main>
-      </div>
+      <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+        <div className='App'>
+          <main>
+            <Route
+              exact
+              path='/'
+              component={Home}
+              onEnter={this.props.fetchTicker()}
+            />
+          </main>
+        </div>
+      </MuiThemeProvider>
     )
   }
 }
