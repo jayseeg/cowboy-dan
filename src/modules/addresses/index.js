@@ -95,7 +95,8 @@ export const generateAddress = () => ({
 
 export const saveUrl = () => (dispatch, getState) => {
   const {routing: {location: {pathname}}} = getState()
-  const addressesString = pathname.substr(pathname.lastIndexOf('addresses/') + 10)
+  const addressesIndex = pathname.lastIndexOf('addresses/') + 10
+  const addressesString = pathname.substr(addressesIndex)
   if (!addressesString.length) return
   const urlAddressIDs = addressesString.split(',')
 
