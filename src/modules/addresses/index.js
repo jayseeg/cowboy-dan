@@ -1,3 +1,5 @@
+import {replace} from 'react-router-redux'
+
 import serializeFormData from '../../lib/serializeFormData'
 
 export const FETCH_ADDRESSES = 'addresses/FETCH_ADDRESSES'
@@ -30,13 +32,7 @@ export default (state = initialState, action) => {
       }
 
     case SAVE_FORM:
-      const {form} = action
-      const formData = new FormData(form)
-      const formHash = serializeFormData(formData)
-      const addressIDs = Object.keys(formHash)
-        .filter(key => key.indexOf('address') !== -1)
-        .map(key => formHash[key].trim())
-        .filter(id => id)
+      const {addressIDs} = action
 
       return {
         ...state,
@@ -63,10 +59,20 @@ export default (state = initialState, action) => {
   }
 }
 
-export const saveForm = form => ({
-  type: SAVE_FORM,
-  form,
-})
+export const saveForm = form => (dispatch, store) => {
+  const formData = new FormData(form)
+  const formHash = serializeFormData(formData)
+  const addressIDs = Object.keys(formHash)
+    .filter(key => key.indexOf('address') !== -1)
+    .map(key => formHash[key].trim())
+    .filter(id => id)
+
+  dispatch({
+    type: SAVE_FORM,
+    addressIDs,
+  })
+  dispatch(replace(`/addresses/${addressIDs.join(',')}`))
+}
 
 export const fetchAddresses = addressIDs => ({
   type: FETCH_ADDRESSES,
@@ -85,4 +91,22 @@ export const generateAddress = () => ({
       url: `/new_address`,
     },
   }
+})
+
+export const saveUrl = () => (dispatch, getState) => {
+  const {routing: {location: {pathname}}} = getState()
+  const addressesString = pathname.substr(pathname.lastIndexOf('addresses/') + 10)
+  if (!addressesString.length) return
+  const urlAddressIDs = addressesString.split(',')
+
+  dispatch({
+    type: SAVE_FORM,
+    addressIDs: urlAddressIDs,
+  })
+  dispatch(fetchAddresses(urlAddressIDs))
+}
+
+export const clearForm = () => ({
+  type: SAVE_FORM,
+  addressIDs: [],
 })

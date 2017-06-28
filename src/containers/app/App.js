@@ -11,6 +11,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import Home from '../home'
 
 import {fetchTicker} from '../../modules/blockchain'
+import {saveUrl} from '../../modules/addresses'
+import {composeEnterHooksParallel} from '../../lib/reactRouterComposeHooks'
 import '../../App.css'
 
 injectTapEventPlugin()
@@ -22,10 +24,12 @@ class App extends Component {
         <div className='App'>
           <main>
             <Route
-              exact
               path='/'
               component={Home}
-              onEnter={this.props.fetchTicker()}
+              onEnter={composeEnterHooksParallel([
+                this.props.fetchTicker(),
+                this.props.saveUrl(),
+              ])}
             />
           </main>
         </div>
@@ -34,7 +38,10 @@ class App extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({fetchTicker}, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators({
+  fetchTicker,
+  saveUrl,
+}, dispatch)
 
 export default connect(
   null,
