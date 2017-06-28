@@ -47,11 +47,6 @@ export default (state = initialState, action) => {
         updatedAddressIDs,
       }
 
-    case PONG:
-      console.log(action.message.op)
-
-      return state
-
     case DROP_UPDATED_ADDRESSES:
       return {
         ...state,
@@ -90,7 +85,7 @@ export const connected = () => dispatch => {
     type: CONNECTED,
     status: 'connected',
   })
-  
+
   setTimeout(() => dispatch(ping()), 30000)
   setTimeout(() => dispatch(ping()), 60000)
   setTimeout(() => dispatch(ping()), 90000)
